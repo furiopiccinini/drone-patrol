@@ -1,0 +1,62 @@
+{
+  "4": {
+    "name": "ACCELEROMETER",
+    "scheme": "xyz",
+    "value": 0,
+    "dashboard": 1
+  },
+
+  "34": {
+    "name": "ROTATION",
+    "scheme": "quaternion",
+    "dashboard": 1
+  },
+
+  "128": {
+    "name": "TEMPERATURE",
+    "scheme": "singleRead",
+    "parse-scheme": 
+    [
+      {"name": "val", "type": "int16", "scale-factor": 0.01}
+    ],
+    "value": 0,
+    "sampleCount": 0,
+    "dashboard": 1
+  },
+
+  "129": {
+    "name": "BAROMETER",
+    "scheme": "singleRead",
+    "parse-scheme": 
+    [
+      {"name": "val", "type": "uint24", "scale-factor": 0.0078125}
+    ],
+    "value": 0,
+    "sampleCount": 0,
+    "dashboard": 1
+  },
+
+  "130": {
+    "name": "HUMIDITY",
+    "scheme": "singleRead",
+    "parse-scheme": 
+    [
+      {"name": "val", "type": "uint8", "scale-factor": 1}
+    ],
+    "value": 0,
+    "sampleCount": 0,
+    "dashboard": 1
+  },
+
+  "131": {
+    "name": "GAS",
+    "scheme": "singleRead",
+    "parse-scheme": 
+    [
+      {"name": "val", "type": "uint32", "scale-factor": 1}
+    ],
+    "value": 0,
+    "sampleCount": 0,
+    "dashboard": 1
+  }
+}

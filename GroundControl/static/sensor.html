@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+
+    <title>Drone Patrol - Ground Control</title>
+  </head>
+  <body>
+
+    <!-- Connection form -->
+    <br>
+    <div class="container text-center">
+
+      <div class="row">
+        <!-- <div class="col-md-3 offset-md-3"> -->
+        <div class="col"> 
+          <h2>Drone Patrol - Ground Control</h2>  
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col"> 
+          <button id="connectButton" name="connectButton" class="btn btn-primary">Connect</button>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="row">
+        <div class="col"> 
+          <h8> <i>Current status: </i></h8><span id="connectionStatus" class="badge rounded-pill bg-danger">Disconnected</span>
+        </div>
+      </div>
+
+    </div>
+    <br><hr>
+
+    <!-- Configuration form -->
+    <div class="container text-center">
+      <h3>Configuration and Settings</h3>
+      <div class="row input-group">
+        <div class="col-md-3 input-group">
+          <span class="input-group-text" id="basic-addon1">Sensor </span>
+          <input id="sensorId" name="sensorId" type="text" class="form-control" aria-describedby="basic-addon1"> 
+        </div>
+        <div class="col-md-3 input-group">
+          <span class="input-group-text" id="basic-addon1">Sample Rate </span>
+          <input id="rate" name="rate" type="text" class="form-control input-md">
+        </div>
+        <div class="col-md-3 input-group">
+          <span class="input-group-text" id="basic-addon1">Latency </span>
+          <input id="latency" name="latency" type="text" class="form-control input-md">
+        </div>
+        <div class="col-md-3 input-group">
+          <button type="button" id="configureButton" name="configureButton" class="btn btn-primary">Configure</button> 
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <!-- File name form and sampling start button -->
+    <div class="container text-center">
+      <div class="row input-group">
+        <div class="col-md-3 input-group">
+          <span class="input-group-text" id="basic-addon1">Title </span>
+          <input id="samplefileId" name="samplefileId" type="text" class="form-control" aria-describedby="basic-addon1"> 
+        </div>
+        <div class="col-md-3 input-group">
+          <button type="button" id="samplefileButton" name="samplefileButton" class="btn btn-primary">Set Sampling File</button> 
+        </div>
+        <div class="col-md-3 input-group">
+          <span class="input-group-text" id="basic-addon1">Samples </span>
+          <input id="numsamplesId" name="numsamplesId" type="text" class="form-control" aria-describedby="basic-addon1"> 
+        </div>
+        <div class="col-md-3 input-group">
+          <button type="button" id="startsamplingButton" name="startsamplingButton" class="btn btn-primary">Start Sampling</button> 
+        </div>
+      </div>
+    </div>
+    <br><hr><br>
+
+    <!-- NodeJS Server IP address -->
+    <div class="container text-center">
+      <div class="row input-group">
+        <div class="col-md-3 input-group">
+          <span class="input-group-text" id="basic-addon1">Node IP </span>
+          <input id="nodeIP" name="nodeIP" type="text" class="form-control" aria-describedby="basic-addon1"> 
+        </div>
+        <div class="col-md-3 input-group">
+          <button type="button" id="nodeIPButton" name="nodeIPButton" class="btn btn-primary">Confirm</button> 
+        </div>
+      </div>
+    </div>
+    <br><hr><br>
+
+    <!-- Read sensor data form -->
+    <div class="container text-center">
+      <h3>Sensor data</h3>  
+      <table id="dataTable" class="table table-bordered" style="table-layout:auto; width:100%;">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 10%;">Sensor ID</th>
+            <th scope="col" style="width: 14%;">Sensor Name</th>
+            <th scope="col" style="width: 25%;">Data</th>
+            <!-- <th scope="col" style="width: 7%;">Status</th> -->
+            <th scope="col" style="width: 44%;">Chart</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+<script>
+
+// -----------------------------------------------------------------------
+// Initialization and hardcoded values
+// -----------------------------------------------------------------------
+
+// Initializes the sensors configuration values. If the sensorId is 0 pressing configure
+// button the default values are set for all the sensors.
+document.getElementById('sensorId').value = '0';
+document.getElementById('rate').value = '0';
+document.getElementById('latency').value = '0';
+document.getElementById('samplefileId').value = 'FSamples';
+document.getElementById('numsamplesId').value = '200';
+document.getElementById('nodeIP').value = 'not_set';
+
+// Document global constants
+const deviceName = 'NICLA'
+const sensorServiceUuid = '34c2e3bb-34aa-11eb-adc1-0242ac120002';
+const sensorConfigCharacteristicUuid = '34c2e3bd-34aa-11eb-adc1-0242ac120002';
+const sensorDataCharacteristicUuid = '34c2e3bc-34aa-11eb-adc1-0242ac120002';
+const sensorLongDataCharacteristicUuid = '34c2e3be-34aa-11eb-adc1-0242ac120002';
+
+// Document global variables
+var bleDevice
+var bleServer
+var sensorService
+var sensorConfigCharacteristic
+var sensorDataCharacteristic
+var sensorLongDataCharacteristic
+var sensorMap = new Map();
+var parseScheme;
+var sensorTypes;
+var sensorTypesLen;
+// The Node JS server IP (also URL names like localhost are valid)
+var serverNodeIP;
+// The Node JS Server port
+var nodeServerPort = 3000;
+// Samples counter to send to the NodeJS server
+var samplesCounter = 0;
+// Sensor data for Json record
+const sensorDataJson = [0, 0, 1, 0];
+// Hardcoded sensor IDs
+const sensorIDs = [128, 129, 130, 131];
+
+// -----------------------------------------------------------------------
+// JSON sensors parameters setup
+// -----------------------------------------------------------------------
+
+// Acquire and parse the sensors scheme Json file
+fetch("./parse-scheme.json")
+  .then(response => response.json())
+  .then(json => {
+    console.log("Json scheme file psrsed " + json);
+    parseScheme = json;
+  });
+
+  // Acquire and parse the sensor types map used in the page
+fetch("./sensor-type-map.json")
+  .then(response => response.json())
+  .then(json => {
+    console.log("Json sensor type map file psrsed " + json);
+    sensorTypes = json;
+    var counter = 0;
+    sensorTypesLen = Object.keys(sensorTypes).length;
+    console.log("Sensor types length: ", sensorTypesLen);
+    fillSensorTable();
+  });
+
+// -----------------------------------------------------------------------
+// UI Buttons callback functions
+// -----------------------------------------------------------------------
+
+// Button callback to open the BLE connection pupup
+// The configure, sample file setting and start sampling are enabled only
+// if the server is connected to a Nicla device.
+document.querySelector('#connectButton').addEventListener('click', function() {
+  if (isWebBluetoothEnabled()) { 
+    connect() 
+    .then(_ => {
+      console.log("BLE Connected")
+      document.querySelector('#configureButton').disabled = false
+      document.querySelector('#samplefileButton').disabled = false
+      document.querySelector('#startsamplingButton').disabled = false
+    })
+    .catch(error => {
+      console.log("BLe connection ERROR: " + error);
+    });
+  }
+});
+
+// Button callback to start sampling.
+// The button reset the samples counter to the higher value
+// decremented every data reading cycle.
+document.querySelector('#startsamplingButton').addEventListener('click', function() {
+  if (isWebBluetoothEnabled()) { 
+    samplesCounter = parseInt(document.getElementById('numsamplesId').value);
+    console.log('System ready to collect ' + samplesCounter + " samples");
+  }
+});
+
+// Button callback to manage the configuration.
+// If the field Sensor is zero, the sensors rate and latency are set to the
+// hardcoded default values, else the specific sensor in the sensor field is
+// set to the desired values. 
+// Note: A sample rate zero disable the sensor data stream.
+document.querySelector('#configureButton').addEventListener('click', 
+  _=> {
+
+    var sensorId = parseInt(document.getElementById('sensorId').value);
+    var sampleRate = parseFloat(document.getElementById('rate').value);
+    var latency = parseInt(document.getElementById('latency').value);
+
+      // Else -> Default settings if sensor ID in form is 0
+
+    if (sensorTypes[sensorId].name) {
+
+      var configPacket = new Uint8Array(9);
+      configPacket[0] = sensorId;
+      configPacket.set(floatToBytes(sampleRate), 1);
+      configPacket.set(intToBytes(latency), 5);
+      // Save the settings to the Nicla
+      sensorConfigCharacteristic.writeValue(configPacket)
+      .then(_ => {  
+        console.log('Configuration updated to Nicla');
+      });
+    }
+  }
+);
+
+// Button callback to set the sample file name as it is specified 
+// in the File field and send the name to the NodeJS server.
+document.querySelector('#samplefileButton').addEventListener('click', 
+  _=> {
+    var fileId = document.getElementById('samplefileId').value;
+
+    // Send the file name to the node server via POST
+    var myHeaders = new Headers();
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("filename", fileId);
+
+    var requestOptions = {
+      method: 'POST',
+      mode: 'cors',
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: 'follow'
+    };
+
+    // Execute the REST call.
+    serverAPI = serverNodeIP + "samplefile";
+
+    fetch(serverAPI, requestOptions)
+      .then(response => response.text())
+      .catch(error => console.log('Sample file name ERROR: ', error));
+
+  });
+
+// Button callback to Set the NodeJS server IP address (Or URL name)
+// The URL string is generated automatically.
+document.querySelector('#nodeIPButton').addEventListener('click', function() {
+
+  serverNodeIP = "http://" + 
+                  document.getElementById('nodeIP').value +
+                  ":" + nodeServerPort + "/";
+  console.log("NodeJS URL: " + serverNodeIP);
+});
+
+// ---------------------------------------------
+// Conversion functions and utilities
+// ---------------------------------------------
+
+// Convert a floating point number to byte array
+function floatToBytes(value) {
+  var tempArray = new Float32Array(1);
+  tempArray[0] = value;
+  return new Uint8Array(tempArray.buffer);
+}
+
+// Conver an integer to a byte array
+function intToBytes(value) {
+  var tempArray = new Int32Array(1);
+  tempArray[0] = value;
+  return new Uint8Array(tempArray.buffer);
+}
+
+// Check if the browser can accept BLE connections.
+function isWebBluetoothEnabled() {
+  if (!navigator.bluetooth) {
+    console.log('Web Bluetooth is NOT available!')
+    return false
+  }
+  console.log('Web Bluetooth is available!')
+  return true
+}
+
+// Retrieve BLE device information for connection.
+function getDeviceInfo() {
+  let options = {
+    filters: [{ name: deviceName}],
+    optionalServices: [sensorServiceUuid]
+  };
+  console.log('Requesting BLE device info...');
+  return navigator.bluetooth.requestDevice(options).then(device => {
+    bleDevice = device
+  }).catch(error => {
+    console.log('Request device ERROR: ' + error)
+  });
+}
+
+// BLE connection function
+function connect() {
+  return getDeviceInfo()
+  .then(connectDevice)
+  .then(getSensorCharacteristics)
+  .then(onConnection);
+}
+
+// Connect BLE device after GATT discovery
+function connectDevice() {
+  console.log('Connecting to device')
+  bleDevice.addEventListener('gattserverdisconnected', onDisconnection);
+  return bleDevice.gatt.connect()
+  .then(server => {
+    bleServer = server;
+    return bleServer.getPrimaryService(sensorServiceUuid);
+  })
+  .then(service => {
+    sensorService = service;
+  });
+}
+
+// BLE Disconnection callback
+function onDisconnection(event) {
+  var status = document.getElementById("connectionStatus");
+  status.innerHTML = "Disconnected";
+  status.className = "badge rounded-pill bg-danger";
+}
+
+// BLE Connection event callback
+function onConnection() {
+  var status = document.getElementById("connectionStatus");
+  status.innerHTML = "Connected";
+  status.className = "badge rounded-pill bg-success";
+}
+
+// Retrieve the characteristics  of a sensor
+function getSensorCharacteristics() {
+  console.log('Getting sensor characteristics');
+  return sensorService.getCharacteristic(sensorConfigCharacteristicUuid)
+  .then(characteristic => {
+    sensorConfigCharacteristic = characteristic;
+  })
+  .then(_ => {
+    return sensorService.getCharacteristic(sensorDataCharacteristicUuid);
+  })
+  .then(characteristic => {
+    sensorDataCharacteristic = characteristic;
+    sensorDataCharacteristic.startNotifications();
+    sensorDataCharacteristic.addEventListener('characteristicvaluechanged', receiveSensorData)
+  })
+  .then(_ => {
+    return sensorService.getCharacteristic(sensorLongDataCharacteristicUuid);
+  })
+  .then(characteristic => {
+    sensorLongDataCharacteristic = characteristic;
+    sensorLongDataCharacteristic.startNotifications();
+    sensorLongDataCharacteristic.addEventListener('characteristicvaluechanged', receiveSensorData)
+  });
+}
+
+// Update the sensor status in the table and enable the sensor
+// automatically
+function updateSensorStatus(_this, sensor) {
+  var configPacket = new Uint8Array(9);
+  configPacket[0] = sensor;
+  //Turn sensor ON
+  console.log("Enable sensor ", sensor);
+  configPacket.set(floatToBytes(1), 1);
+  console.log(configPacket);
+  sensorConfigCharacteristic.writeValue(configPacket)
+  .then(_ => {  
+    console.log('Configuration written to Nicla');
+  });
+}
+
+// Update the table with the sensor values and send the JSON format
+// sensors data record to the NodeJS server
+function fillSensorTable() {
+  var table = document.getElementById("dataTable");
+  var tableLength = table.rows.length;
+
+  for (let i = 0; i < sensorTypesLen; i++) {
+    var key = Object.keys(sensorTypes)[i];
+    if (sensorTypes[key].dashboard == 1) {
+      var tableLength = table.rows.length;
+      var sensorIdx = parseInt(key)
+      sensorMap.set(sensorIdx, tableLength);
+      var row = table.insertRow(tableLength);
+      var cell = row.insertCell(0);
+      cell.innerHTML = key;
+      cell = row.insertCell(1);
+      cell.innerHTML = sensorTypes[key].name;
+      cell = row.insertCell(2);
+      cell.innerHTML = 0;
+      cell = row.insertCell(3);
+      // cell.innerHTML = '<input id="Button" type="button" value="Enabled" onclick="updateSensorStatus(this, \'' + sensorIdx + '\');"/>'
+      // cell = row.insertCell(3);
+      var chartIdx = sensorTypes[sensorIdx].name;
+      cell.innerHTML = '<div id=\'' + chartIdx + '\'></div>';
+    }
+  }
+}
+
+a=[]; b=[]; c=[];
+
+// Receive the sensor data from the Nicla and update the monitoring
+// table. If sampling is active, it updates the Jsong record and
+// when it is complete sends it to the Node server.
+function receiveSensorData(event) {
+  var value = event.target.value;
+  // Get sensor data
+  var sensor = value.getUint8(0);
+  var size = value.getUint8(1);
+  var parsedData = parseData(sensor, value);
+  parsedName = parsedData[0]
+  parsedStringValue = parsedData[1]
+  parsedValue = parsedData[2]
+
+  var table = document.getElementById("dataTable");
+  // If sensor is already in the table -> update its value
+  if (sensorMap.has(sensor)) {
+    rowIndex = sensorMap.get(sensor);
+    // Assign the column values of the sensor to the
+    // corresponding table row
+    var row = table.rows[rowIndex];
+    var cell = row.cells[0];
+    cell.innerHTML = sensor;
+    cell = row.cells[1];
+    cell.innerHTML = parsedName;
+    cell = row.cells[2];
+    cell.innerHTML = parsedStringValue;
+    cell = row.cells[3];
+    // Name of the chart
+    var chartIdx = parsedName;
+    // Plot x-axis index
+    var cnt = 0;
+
+    // Manage Json record for Node server
+    // Check if we are in a counting loop
+    console.log("samplesCounter = " + samplesCounter);
+    if(samplesCounter != 0) {
+      // check if the sensor is in the range
+      if( (sensor>= 128) && 
+          (sensor <= 131)) {
+        console.log("sensor is in the sampling range");
+        // Load the Sensor value in the current sensor data set
+        switch(sensor) {
+          case sensorIDs[0]: // 128
+            sensorDataJson[0] = parsedValue;
+            console.log("Received sensor ID " + sensorIDs[0]);
+            break;
+          case sensorIDs[1]: // 129
+            sensorDataJson[1] = parsedValue;
+            console.log("Received sensor ID " + sensorIDs[1]);
+            break;
+          case sensorIDs[2]: //130
+
+            // As the sensor humidity (ID 2) is most frequently zero as its
+            // rating is considerably slow, a workaround to bypass the controls
+            // is to set it to a positive number near to zero.
+            if(parsedValue == 0) {
+              sensorDataJson[2] = 1;  
+            } else {
+              sensorDataJson[2] = parsedValue;
+            }
+            console.log("Received sensor ID " + sensorIDs[2]);
+            break;
+          case sensorIDs[3]: //131
+            sensorDataJson[3] = parsedValue;
+            console.log("Received sensor ID " + sensorIDs[3]);
+            break;
+        } // Filled the corresponding sensor data
+
+        // If all the four sensor readings have done, create the Json object
+        var isOkForJson = true;
+        for(let j = 0; j < 4; j++) {
+          if(sensorDataJson[j] == 0) {
+            console.log("sensorDataJson[" + j + "] is zero!");
+            isOkForJson = false;
+          }
+        }
+        // Now we have all the information to decide if it is worth to send
+        // a data set record to the Node server
+        
+        // Sensors data are ready to be packed and sent to the Node server
+        if(isOkForJson) {
+          // Json record string
+          var jString;
+          // Json record object
+          var jObject = {
+            Temperature: 0,
+            Barometer: 0,
+            Humidity: 0,
+            Gas: 0
+          };
+          // Assign the values to the record fields
+          jObject.Temperature = sensorDataJson[0];
+          jObject.Barometer = sensorDataJson[1];
+          jObject.Humidity = sensorDataJson[2];
+          jObject.Gas = sensorDataJson[3];
+
+          console.log('Json string record #' + 
+                      samplesCounter + " : " + 
+                      JSON.stringify(jObject));
+          // The counter decrease up to zero
+          samplesCounter--;
+
+          // Send the Json record to the Node server via REST 
+          var myHeaders = new Headers();
+
+          var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify({
+              'Temp': jObject.Temperature,
+              'Bar': jObject.Barometer,
+              'Hum': jObject.Humidity,
+              'Gas': jObject.Gas
+            }),
+            redirect: 'follow'
+          };
+          // Execute the REST call.
+          serverAPI = serverNodeIP + "data";
+
+          fetch(serverAPI, requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('ERROR sending Json record to the Node server ', error));  
+        } // isOkForJson is true
+      } // The sensor ID is in the range
+    } // Counter for record creation is active
+    // -------------------------------------------- Json processor END
+
+    // Should save the data for ths single read of the sensor IDs
+    // 128 (temp), 129 (barom), 13o (hum), 131 (gas)
+    if (sensorTypes[sensor].scheme == "singleRead") {
+      //Initial condition to draw the first chart point
+      if (sensorTypes[sensor].value == 0) {   //Plot doesn't exist yet because no valid data have been received
+        if (parsedValue != 0) {   //First valid data received: draw it in the chart
+          Plotly.newPlot(chartIdx,[{y:[parsedValue],type:'line'}]);
+          //Update json to signal that the reception started
+          cnt = sensorTypes[sensor].value + 1;
+          sensorTypes[sensor].value = cnt;
+        }
+      } else {    //Plot already exists
+        Plotly.extendTraces(chartIdx,{y:[[parsedValue]]}, [0]);
+        cnt = sensorTypes[sensor].value;
+        sensorTypes[sensor].value = cnt + 1;
+      }
+
+      if (cnt > 200) {
+        Plotly.relayout(chartIdx,{
+          xaxis: {
+            range: [cnt-200,cnt]
+          }
+        });
+      }
+
+    } else if (sensorTypes[sensor].scheme == "xyz") {
+        //Parse 3D axes values
+        const arrXYZValues = parsedStringValue.split(" ");
+        // console.log("Split: ", arrXYZValues);
+        // console.log("Split[1]: ", arrXYZValues[1]);
+        // console.log("Split[5]: ", arrXYZValues[5]);
+        // console.log("Split[9]: ", arrXYZValues[9]);
+
+      //Initial condition to draw the first chart point
+      if (sensorTypes[sensor].value == 0) {   //Plot doesn't exist yet because no valid data have been received
+        if (parsedValue != 0) {   //First valid data received: draw it in the chart
+          Plotly.newPlot(chartIdx,[{x:[arrXYZValues[1]],y:[arrXYZValues[5]],z:[arrXYZValues[9]],type:'mesh3d'}]);
+          //Update json to signal that the reception started
+          sensorTypes[sensor].value = parsedValue;
+        }
+      } else {    //Plot already exists
+        Plotly.extendTraces(chartIdx,{x:[[arrXYZValues[1]]],y:[[arrXYZValues[5]]],z:[[arrXYZValues[9]]]}, [0]);
+      }
+
+    } else if (sensorTypes[sensor].scheme == "BSECOutput") {
+        //Parse BSEC values
+        const BSECValues = parsedStringValue.split(" ");
+        // console.log("Split: ", BSECValues);
+        // console.log("Split[1]: ", BSECValues[2]);
+        // console.log("Split[7]: ", BSECValues[7]);
+
+        var val1 = BSECValues[2];
+        var val2 = BSECValues[7];
+
+        if (sensorTypes[sensor].value == 0) {   //Plot doesn't exist yet because no valid data have been received
+          if (val1 != 0 && val2 != 0) {   //First valid data received: draw it in the chart
+            Plotly.newPlot(chartIdx,[{y:[val1],name: 'Temp',type:'line'},{y:[val2],name: 'Humidity',type:'line'}]);
+            //Update json to signal that the reception started
+            cnt = sensorTypes[sensor].value + 1;
+            sensorTypes[sensor].value = cnt;
+          }
+        } else {    //Plot already exists
+          Plotly.extendTraces(chartIdx,{y:[[val1]]}, [0]);
+          Plotly.extendTraces(chartIdx,{y:[[val2]]}, [1]);
+          cnt = sensorTypes[sensor].value;
+          sensorTypes[sensor].value = cnt + 1;
+        }
+
+        if (cnt > 150) {
+          Plotly.relayout(chartIdx,{
+            xaxis: {
+              range: [cnt-150,cnt]
+            }
+          });
+        }
+    } else if (sensorTypes[sensor].scheme == "BSECOutputV2") {
+        //Parse BSEC values
+        const BSECValues = parsedStringValue.split(" ");
+
+        var val1 = BSECValues[1];   //iaq
+        var val2 = BSECValues[5];   //iaq-s
+        var val3 = BSECValues[9] * 1000;   //b-voc-eq
+        var val4 = BSECValues[13];  //co2-eq
+        var val5 = BSECValues[17];  //status
+
+        if (sensorTypes[sensor].value == 0) {   //Plot doesn't exist yet because no valid data have been received
+          if (val4 != 0) {   //First valid data received: draw it in the chart, valid CO2-eq output is always greater than 0
+              Plotly.newPlot(chartIdx,
+                  [
+                      {y:[val1],name:'IAQ',type:'line'}, {y:[val2],name:'IAQ-S',type:'line'},
+                      {y:[val3],name:'bVOC-eq (ppb)',type:'line'}, {y:[val4],name:'CO2-eq (ppm)',type:'line'}
+                  ]);
+            //Update json to signal that the reception started
+            cnt = sensorTypes[sensor].value + 1;
+            sensorTypes[sensor].value = cnt;
+          }
+        } else {    //Plot already exists
+          Plotly.extendTraces(chartIdx,{y:[[val1]]}, [0]);
+          Plotly.extendTraces(chartIdx,{y:[[val2]]}, [1]);
+          Plotly.extendTraces(chartIdx,{y:[[val3]]}, [2]);
+          Plotly.extendTraces(chartIdx,{y:[[val4]]}, [3]);
+          cnt = sensorTypes[sensor].value;
+          sensorTypes[sensor].value = cnt + 1;
+        }
+
+        if (cnt > 150) {
+          Plotly.relayout(chartIdx,{
+            xaxis: {
+              range: [cnt-150,cnt]
+            }
+          });
+        }
+
+    }
+  }
+}
+
+// Sensors dData pasing
+function parseData(sensor, data) {
+  var sensorName = sensorTypes[sensor].name;
+  var scheme = sensorTypes[sensor].scheme;
+  var result = "";
+  var parse_scheme;
+  var eventcount;
+  // dataIndex start from 2 because the first bytes of the packet indicate
+  // the sensor id and the data size
+  var dataIndex = 0 + 2;
+  var value = 0;
+
+  if (scheme == "singleRead") {
+    parse_scheme = sensorTypes[sensor]["parse-scheme"];
+  } else if (scheme == "quaternion") {
+    parse_scheme = parseScheme["types"][0]["parse-scheme"];
+  } else if (scheme == "xyz") {
+    parse_scheme = parseScheme["types"][1]["parse-scheme"];
+  } else if (scheme == "orientation") {
+    parse_scheme = parseScheme["types"][2]["parse-scheme"];
+  } else if (scheme == "event") {
+    eventcount = sensorTypes[sensor].eventcount;
+    parse_scheme = parseScheme["types"][3]["parse-scheme"];
+  } else if (scheme == "activity") {
+    parse_scheme = parseScheme["types"][4]["parse-scheme"];
+  } else if (scheme == "BSECOutput") {
+    parse_scheme = parseScheme["types"][5]["parse-scheme"];
+  } else if (scheme == "BSECOutputV2") {
+      var size = data.getUint8(1);
+      if (size <= 10) {
+         parse_scheme = parseScheme["types"][6]["parse-scheme"];
+      } else {
+         parse_scheme = parseScheme["types"][7]["parse-scheme"];
+      }
+  }
+
+  parse_scheme.forEach(element => {
+    // console.log(element);
+    var name = element['name'];
+    var valueType = element['type'];
+    var scale = element['scale-factor'];
+    var size = 0;
+
+    if (valueType == "uint8") {
+      value = data.getUint8(dataIndex, true) * scale; 
+      size = 1;
+    } else if (valueType == "int8") {
+      value = data.getInt8(dataIndex, true) * scale; 
+      size = 1;
+    } else if (valueType == "uint16") {
+      value = data.getUint16(dataIndex, true) * scale; 
+      size = 2;
+    } else if (valueType == "int16") {
+      value = data.getInt16(dataIndex, true) * scale; 
+      size = 2;
+    } else if (valueType == "uint24") {
+      value = data.getUint16(dataIndex, true) + (data.getUint8(dataIndex+2, true) << 16);
+      size = 3;
+    } else if (valueType == "uint32") {
+      value = data.getUint16(dataIndex, true) + (data.getUint16(dataIndex+2, true) << 16);
+      size = 4;
+    } else if (valueType == "float") {
+      value = data.getFloat32(dataIndex, true) * scale; 
+      size = 4;
+    } else if (valueType == "none") {
+      value = eventcount + 1;
+      sensorTypes[sensor].eventcount = value;
+      size = 0;
+    } else {
+      console.log("ERROR pasring element: unknown type");
+    }
+
+    // if (scheme == "activity") {
+    //   value = geActivityString(value);
+    // }
+    result = result + element.name + ": " + value + "   ";
+    // console.log(dataIndex);
+    dataIndex += size;
+
+  });
+
+  return [sensorName, result, value];
+}
+
+
+</script>
