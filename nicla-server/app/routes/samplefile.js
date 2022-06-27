@@ -1,35 +1,31 @@
-/*
+/**
   samplefile.js module receives the sample file name and create it adding the full path and
   the header 
+  @module samplefile.js
 */
 
+/** Require declarations */
 var express = require('express');
 var router = express.Router();
-var dateTime = require('../dateTime.js'); // dateTime module, to create timestamp
-var globalVars = require('./globals'); // global vars module
+var dateTime = require('../dateTime.js'); /** dateTime module, to create timestamp @module dateTime*/
+var globalVars = require('./globals'); /** global vars module */
 const fs = require('fs');
 var path = require('path');
-var global_vars = require('../routes/globals'); // global vars module
 
-// GET control for unsupported calls
+/** GET control for unsupported calls */
 router.get('/', function (req, res) {
   res.send('GET method not accepted');
 });
 
-// POST create file name with full path */
+/** POST create file name with full path */
 router.post('/', function (req, res) {
 
   try {
-    // Set the TAG name added to any sampled record
+    /** Set the TAG name added to any sampled record */
     globalVars.tagName = req.body.filename;
-    // Create the file
+    /** Create the file appending date, time and file extension */
     globalVars.fName = globalVars.tagName + '-' + dateTime.dateTime() + ".csv";
     console.log("File name: " + globalVars.fName);
-    // File header in CSV format
-    // File header has been suspended to be able to concatentate multiple sampling
-    // into a single data set.
-    // headerCSV = "Temperature;Barometer;Humidity;Gas;TAG\n";
-    // fs.appendFileSync(path.resolve(process.cwd() + '/data/' + global_vars.fName), headerCSV);
     res.send("File name created");
   }
   catch (error) {

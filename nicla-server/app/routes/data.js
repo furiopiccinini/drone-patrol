@@ -1,21 +1,25 @@
-// data API, receives the JSON data from Nicla Sense ME and writes it 
-// to the CSV file, which is created firing the samplefile API.
+/** data API, receives the JSON data from Nicla Sense ME and writes it  
+ * to the CSV file, which is created firing the samplefile API.
+ * @module data.js
+*/
 
 var express = require('express');
 var router = express.Router();
 const fs = require('fs');
-var global_vars = require('../routes/globals'); // global vars module
+var global_vars = require('../routes/globals'); /** global vars module @global*/
 var path = require('path');
-// Json to CSV Converter options
+/** Json to CSV Converter options 
+ * @params options
+*/
 const options = {
   delimiter: {
     field: ';',
     eol: '\n',
   },
   trimHeaderFields: true,
-    prependHeader: false
+  prependHeader: false
 }
-// Create the Json to CSV converter
+/** Create the Json to CSV converter */
 const converter = require('json-2-csv');
 
 /* GET data page. */
@@ -26,12 +30,14 @@ router.get('/', function (req, res) {
 /* POST data page. */
 router.post('/', function (req, res, next) {
 
-  // convert the JSON array in CSV
+  /** convert the JSON array in CSV */
   converter.json2csvAsync(req.body, options).then(csv => {
 
-    // append CSV to the file, whose name comes from globals.js
+    /** append CSV to the file, whose name comes from globals.js */
     if (global_vars.fName != "") {
+      /** formats CSV file */
       csvRecord = csv + ";" + global_vars.tagName + "\n";
+      /** append data to file, using the name set in samplefile.js */
       fs.appendFileSync(path.resolve(process.cwd() + '/data/' + global_vars.fName), csvRecord);
       res.send("Data written to CSV file ");
     }
