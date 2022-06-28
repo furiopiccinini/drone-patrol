@@ -1,0 +1,11 @@
+05/30/2022 06:15:38 PM *** DroneControl new session started ***
+05/30/2022 06:15:38 PM Json dronecontrol.json file loading
+05/30/2022 06:15:38 PM Loaded dronecontrol Json file completed.
+05/30/2022 06:15:38 PM --- Commands to execute 4
+05/30/2022 06:15:46 PM Start command processor with 4 commands
+05/30/2022 06:15:46 PM --- Executes the command sequence 1 of 1
+05/30/2022 06:15:46 PM API :speed 100
+05/30/2022 06:15:54 PM API :takeoff
+05/30/2022 06:16:02 PM API :up 50
+05/30/2022 06:16:10 PM API :land
+05/30/2022 06:16:18 PM *** Session closed ***

@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "31400cfe-4815-4e2a-be32-fe0e98cf6c91",
+		"name": "Nicla Server API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3525131"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"first test\", function(){",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.withBody;",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "name",
+						"value": "testina",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{ \"testJ\": \"2342\", \"tt\": \"2342\", \"r43e34\": \"2342\" },\n{ \"testJ\": \"2342\", \"tt\": \"2342\", \"r43e34\": \"2342\" },\n{ \"testJ\": \"2342\", \"tt\": \"2342\", \"r43e34\": \"2342\" },\n{ \"testJ\": \"2342\", \"tt\": \"2342\", \"r43e34\": \"2342\" },\n{ \"testJ\": \"2342\", \"tt\": \"2342\", \"r43e34\": \"2342\" }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/data",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3000/samplefile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"first test\", function(){",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.withBody;",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "name",
+						"value": "testina",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "filename",
+							"value": "niclafile",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/samplefile",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"samplefile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

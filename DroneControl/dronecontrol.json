@@ -1,0 +1,9 @@
+{
+    "loops": 1,
+    "fly": [
+        "speed 100",
+        "takeoff",
+        "up 50",
+        "land"
+    ]
+}
